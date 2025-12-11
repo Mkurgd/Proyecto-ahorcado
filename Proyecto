@@ -90,7 +90,7 @@ def ahorcado(intentos):
            |
         """
     ]
-    # Devuelve el dibujo centrado en un ancho de 50 caracteres
+    # Devuelve el dibujo centrado
     return fases[6 - intentos].center(50)
 
 # Función principal del juego
@@ -99,7 +99,7 @@ def play(palabra, intentos_max):
     letras_adv = []                   # Letras ya intentadas
     p_adv = []                        # Palabras completas ya intentadas
     intentos = intentos_max           # Número de intentos según dificultad
-    escenario_adv = False             # Bandera para saber si se ganó
+    escenario_adv = False             # Para saber si se ganó
 
     print("\n¡Comienza el juego!")
     print(ahorcado(intentos))         # Muestra el ahorcado inicial
@@ -157,7 +157,8 @@ def play(palabra, intentos_max):
         print("¡Perdiste! La palabra correcta era:", palabra, "¡Que perdedor!")
 
 # Punto de entrada del programa
-if __name__ == "_main_":
+if __name__ == "__main__":
     lista_palabras, intentos = elegir_dificultad()  # Se elige dificultad
     palabra = obtener(lista_palabras)               # Se obtiene palabra aleatoria
     play(palabra, intentos)                         # Se inicia el juego
+    
