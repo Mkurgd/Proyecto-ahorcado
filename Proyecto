@@ -1,0 +1,163 @@
+import random   # Librería para elegir palabras al azar
+
+# Palabras por nivel de dificultad
+palabras_facil = ["HTML", "CSS", "JAVA"]          # Palabras cortas
+palabras_medio = ["PYTHON", "VARIABLE", "BUCLE"] # Palabras medianas
+palabras_dificil = ["PROGRAMACION", "DESARROLLO", "ALGORITMO"] # Palabras largas
+
+# Función para elegir dificultad
+def elegir_dificultad():
+    # Muestra las opciones de dificultad
+    print("Selecciona la dificultad:")
+    print("1. Fácil (6 intentos, palabras cortas)")
+    print("2. Medio (5 intentos, palabras medianas)")
+    print("3. Difícil (4 intentos, palabras largas)")
+
+    # Bucle hasta que el usuario elija una opción válida
+    while True:
+        opc = input("Opción: ")
+        if opc == "1":
+            return palabras_facil, 6   # Devuelve lista de palabras y número de intentos
+        elif opc == "2":
+            return palabras_medio, 5
+        elif opc == "3":
+            return palabras_dificil, 4
+        else:
+            print("Opción no válida. Intenta otra vez.")
+
+# Función para obtener palabra al azar
+def obtener(palabras):
+    palabra = random.choice(palabras)  # Selecciona una palabra aleatoria
+    return palabra.upper()             # Devuelve la palabra en mayúsculas
+
+# Función que dibuja el ahorcado según los intentos restantes
+def ahorcado(intentos):
+    fases = [
+        """
+           -----
+           |   |
+           |   
+           |  
+           | 
+           |
+        """,
+        """
+           -----
+           |   |
+           |   O
+           |   
+           |   
+           |
+        """,
+        """
+           -----
+           |   |
+           |   O
+           |   |
+           |   
+           |
+        """,
+        """
+           -----
+           |   |
+           |   O
+           |  /|
+           |   
+           |
+        """,
+        """
+           -----
+           |   |
+           |   O
+           |  /|\\
+           |   
+           |
+        """,
+        """
+           -----
+           |   |
+           |   O
+           |  /|\\
+           |  / 
+           |
+        """,
+        """
+           -----
+           |   |
+           |   O
+           |  /|\\
+           |  / \\
+           |
+        """
+    ]
+    # Devuelve el dibujo centrado en un ancho de 50 caracteres
+    return fases[6 - intentos].center(50)
+
+# Función principal del juego
+def play(palabra, intentos_max):
+    p_completa = "_" * len(palabra)   # Palabra oculta con guiones bajos
+    letras_adv = []                   # Letras ya intentadas
+    p_adv = []                        # Palabras completas ya intentadas
+    intentos = intentos_max           # Número de intentos según dificultad
+    escenario_adv = False             # Bandera para saber si se ganó
+
+    print("\n¡Comienza el juego!")
+    print(ahorcado(intentos))         # Muestra el ahorcado inicial
+    print(p_completa)                 # Muestra la palabra oculta
+    print("\n")
+
+    # Bucle principal: se repite mientras no se gane y queden intentos
+    while not escenario_adv and intentos > 0:
+        entrada = input("Escribe una letra o intenta la palabra completa: ").upper()
+
+        # Caso 1: el jugador ingresa una sola letra
+        if len(entrada) == 1 and entrada.isalpha():
+            if entrada in letras_adv:             # Si ya se intentó esa letra
+                print("Ya intentaste la letra:", entrada)
+            elif entrada not in palabra:          # Si la letra no está en la palabra
+                print("Letra incorrecta.")
+                intentos -= 1                     # Se pierde un intento
+                letras_adv.append(entrada)
+            else:                                 # Si la letra está en la palabra
+                print("Correcto! La letra", entrada, "está en la palabra.")
+                letras_adv.append(entrada)
+                lista_temp = list(p_completa)     # Convierte la palabra oculta en lista
+                posiciones = [i for i, x in enumerate(palabra) if x == entrada]
+                for pos in posiciones:            # Reemplaza guiones bajos por la letra
+                    lista_temp[pos] = entrada
+                p_completa = "".join(lista_temp)  # Reconstruye la palabra
+
+                if "_" not in p_completa:         # Si ya no quedan guiones bajos
+                    escenario_adv = True          # Se ganó
+
+        # Caso 2: el jugador intenta adivinar la palabra completa
+        elif len(entrada) == len(palabra):
+            if entrada in p_adv:                  # Si ya intentó esa palabra antes
+                print("Ya intentaste esa palabra antes.")
+            elif entrada != palabra:              # Si la palabra es incorrecta
+                print("Palabra incorrecta.")
+                intentos -= 1
+                p_adv.append(entrada)
+            else:                                 # Si la palabra es correcta
+                p_completa = palabra
+                escenario_adv = True
+
+        else:
+            print("Entrada inválida.")            # Entrada no válida
+
+        # Muestra el estado actual del ahorcado y la palabra
+        print(ahorcado(intentos))
+        print(p_completa)
+        print("\n")
+
+    # Mensaje final según resultado
+    if escenario_adv:
+        print("¡Ganaste! La palabra era:", palabra, "¡Tremendo ganador!")
+    else:
+        print("¡Perdiste! La palabra correcta era:", palabra, "¡Que perdedor!")
+
+# Punto de entrada del programa
+if __name__ == "_main_":
+    lista_palabras, intentos = elegir_dificultad()  # Se elige dificultad
+    palabra = obtener(lista_palabras)               # Se obtiene palabra aleatoria
+    play(palabra, intentos)                         # Se inicia el juego
